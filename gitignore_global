@@ -1,0 +1,17 @@
+# ctags
+tags
+
+# vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+# osx
+.DS_Store
+.AppleDouble
+.LSOverride
+.Spotlight-V100
+.Trashes

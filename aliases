@@ -1,0 +1,21 @@
+# misc
+alias l='ls -lAh'
+alias df='df -h'
+alias du='du -h -c'
+alias tree='tree -C'
+alias top='top -o cpu'
+alias grep='grep --color=auto'
+
+# python
+alias pypath='python -c "import sys; print sys.path" | tr "," "\n" | grep -v "egg"'
+alias pyclean='find . -name "*.pyc" -exec rm {} \;'
+
+# rsync
+alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
+alias rsync-copy="rsync -av --progress -h"
+alias rsync-move="rsync -av --progress -h --remove-source-files"
+alias rsync-update="rsync -avu --progress -h"
+alias rsync-synchronize="rsync -avu --delete --progress -h"
+
+# brew
+alias brews='brew list -1'

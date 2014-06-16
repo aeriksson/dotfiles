@@ -1,0 +1,50 @@
+# Path to your oh-my-zsh configuration.
+ZSH=$HOME/.oh-my-zsh
+ZSH_THEME="andre"
+
+plugins=(
+  autojump
+  brew
+  colored-man
+  git
+  git-flow
+  history-substring-search
+  venv_custom
+  zsh-syntax-highlighting
+)
+
+# Oh-my-zsh options
+DISABLE_CORRECTION="true"
+COMPLETION_WAITING_DOTS="true"
+
+# Paths
+export PATH=/usr/local/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
+export EDITOR='vim'
+
+# Init oh-my-zsh
+source $ZSH/oh-my-zsh.sh
+
+# Setup environment and aliases
+source ~/.profile
+source ~/.aliases
+
+# Autocomplete special directories
+zstyle ':completion:*' special-dirs true
+
+# CTRL-D won't close the root terminal
+if [ $SHLVL -eq 1 ]; then
+  setopt ignoreeof
+else
+  unsetopt ignoreeof
+fi
+
+# Display time
+RPROMPT="[%D{%H:%M:%S}]"
+
+# Enable autojump
+autoload -U compinit && compinit -u
+
+# Bind up/down keys for zsh-history-substring-search
+zmodload zsh/terminfo
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down

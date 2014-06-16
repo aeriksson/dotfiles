@@ -1,0 +1,175 @@
+" vim config
+"
+" Requires Vundle - `git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim`
+" `mkdir -p ~/.vim/undodir` for persistent undo.
+
+" Enable plugins
+set nocompatible
+filetype off
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+Bundle 'gmarik/vundle'
+
+" Sensible defaults
+Bundle 'tpope/vim-sensible'
+" Git integration
+Bundle 'tpope/vim-fugitive'
+" Nice theme
+Bundle 'altercation/vim-colors-solarized'
+" Better navigation
+Bundle 'kien/ctrlp.vim'
+" Better naviagtion
+Bundle 'scrooloose/nerdtree'
+" Easy commenting
+Bundle 'tomtom/tcomment_vim'
+" Autocomplete
+Bundle 'Valloric/YouCompleteMe'
+" Syntax checks
+Bundle 'scrooloose/syntastic'
+" Class outlines
+Bundle 'majutsushi/tagbar'
+" Better numbering
+Bundle 'myusuf3/numbers.vim'
+" Faster editing
+Bundle 'terryma/vim-multiple-cursors'
+" Nicer statusline
+Bundle 'bling/vim-airline'
+" Better undo
+Bundle 'sjl/gundo.vim'
+
+filetype plugin indent on
+set nocompatible
+
+" General
+set hlsearch
+set smartcase
+set viminfo='1000,<1000,s10,h,f1
+
+" Text, tabs, indent
+set expandtab
+set shiftwidth=4
+set tabstop=4
+set linebreak
+set smartindent
+set wrap
+
+" Enable persistent undo
+set undodir=~/.vim/undodir
+set undofile
+set undolevels=1000
+set undoreload=10000
+
+" Enable mouse
+if has("mouse")
+  set mouse=a
+endif
+
+" Use system clipboard
+set clipboard+=unnamed
+
+" Airline
+let g:Powerline_symbols = 'fancy'
+
+" Theme
+syntax enable
+set background=dark
+let g:solarized_visibility = "high"
+colorscheme solarized
+
+" Syntastic
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '!'
+let g:syntastic_python_checkers = ['flake8']
+let g:syntastic_cpp_checkers = ['cpplint']
+let g:syntastic_cpp_cpplint_args = '--verbose=0'
+let g:syntastic_python_flake8_args = '--ignore=E501'
+let g:syntastic_check_on_open=1
+
+" Line numbers
+set number
+
+" YouCompleteMe
+let g:ycm_confirm_extra_conf = 0
+" Keep from overriding syntax checker
+let g:ycm_register_as_syntastic_checker = 1
+
+" Use Syntastic linting in Python
+let g:pymode_lint = 0
+
+" Remember cursor position
+autocmd BufReadPost *
+\ if ! exists("g:leave_my_cursor_position_alone") |
+\ if line("'\"") > 0 && line ("'\"") <= line("$") |
+\ exe "normal g'\"" |
+\ endif |
+\ endif
+
+" No folding
+autocmd Syntax c,cpp,python normal zR
+
+" Airline
+let g:airline_powerline_fonts = 1
+
+" Always enable editing (useful in vimdiff)
+set noreadonly
+
+" Align new rows with parentheses
+set cino=(0
+
+set nocursorcolumn
+set nocursorline
+syntax sync minlines=256
+
+" Save file using sudo
+command Sudow w !sudo tee > /dev/null %
+
+" Save/quit even when holding shift
+command W w
+command Q q
+command WQ wq
+command Wq wq
+
+" Move around splits with <c-hjkl>
+nnoremap <c-j> <c-w>j
+nnoremap <c-k> <c-w>k
+nnoremap <c-h> <c-w>h
+nnoremap <c-l> <c-w>l
+
+" Mark unwanted whitespace
+set whichwrap=h,l,b,s,~,[,]
+set list
+autocmd Syntax make,gitcommit set nolist
+autocmd Syntax c,cpp set colorcolumn=120
+autocmd Syntax python set colorcolumn=100
+
+" Clear search highlight.
+nnoremap <silent> <c-i> :nohlsearch<CR><c-i>
+
+function! Preserve(command)
+  " Preparation: save last search, and cursor position.
+  let _s=@/
+  let l = line(".")
+  let c = col(".")
+  " Do the business:
+  execute a:command
+  " Clean up: restore previous search history, and cursor position
+  let @/=_s
+  call cursor(l, c)
+endfunction
+
+" Clean up trailing whitespace.
+nmap _$ :call Preserve("%s/\\s\\+$//e")<CR>
+
+" Format whole file.
+nmap _= :call Preserve("normal gg=G")<CR>
+
+" Ctrl-P
+let g:ctrlp_root_markers = ['\.git']
+let g:ctrlp_by_filename = 1 " search by filename (not full path) as default.
+let g:ctrlp_dotfiles = 0 " do not search inside dot files and dirs.
+let g:ctrlp_custom_ignore = {'dir': 'build', 'file': '\v\.(o|a|so)$'}
+
+" Ctags
+set tags=./tags;~/code
