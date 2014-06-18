@@ -7,7 +7,6 @@ readonly PROGDIR=$(cd "$(dirname "$0")" && pwd)
 readonly PLATFORM=$(uname)
 
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
-readonly OH_MY_ZSH_URL="https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh"
 readonly CURL_FLAGS="-fsSL"
 
 link_file() {
