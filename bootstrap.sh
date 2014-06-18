@@ -64,8 +64,8 @@ setup_git() {
 
 setup_vim() {
     command_exists vim || install_command vim
-    link_file "${PROGDIR}/vimrc" "${HOME}/.vimrc"
-    link_file "${PROGDIR}/Vundle.vim" "${HOME}/.vim/bundle/"
+    link_file "${PROGDIR}/vim/vimrc" "${HOME}/.vimrc"
+    link_file "${PROGDIR}/vim/Vundle.vim" "${HOME}/.vim/bundle/Vundle.vim"
     mkdir -p "${HOME}/.vim/undodir"
     vim +PluginInstall +qall
 }
