@@ -63,6 +63,7 @@ setup_vim() {
     link_file "${PROGDIR}/vimrc" "${HOME}/.vimrc"
     mkdir -p "${HOME}/.vim/undodir"
     is_dir "$VUNDLE_PATH" || git clone "$VUNDLE_URL" "$VUNDLE_PATH"
+    vim +PluginInstall +qall
 }
 
 setup_zsh() {
