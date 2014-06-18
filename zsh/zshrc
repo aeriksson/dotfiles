@@ -9,7 +9,7 @@ plugins=(
   git
   git-flow
   history-substring-search
-  venv_custom
+  virtualenvwrapper
   zsh-syntax-highlighting
 )
 
