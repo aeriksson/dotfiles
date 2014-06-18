@@ -14,7 +14,7 @@ link_file() {
     local source=$1
     local target=$2
 
-    ln -si "$source" "$target"
+    ln -sni "$source" "$target"
 }
 
 setup_homebrew() {
@@ -65,17 +65,18 @@ setup_git() {
 setup_vim() {
     command_exists vim || install_command vim
     link_file "${PROGDIR}/vim/vimrc" "${HOME}/.vimrc"
-    link_file "${PROGDIR}/vim/Vundle.vim" "${HOME}/.vim/bundle/Vundle.vim"
+    link_file "${PROGDIR}/vim/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
     mkdir -p "${HOME}/.vim/undodir"
     vim +PluginInstall +qall
 }
 
 setup_zsh() {
     command_exists zsh || install_command zsh
-    link_file "${PROGDIR}/zsh/oh-my-zsh" "${HOME}/.oh-my-zsh"
-    link_file "${PROGDIR}/zsh/themes" "${PROGDIR}/zsh/oh-my-zsh/custom/"
+    link_file "${PROGDIR}/zsh/oh-my-zsh/" "${HOME}/.oh-my-zsh"
+    link_file "${PROGDIR}/zsh/themes" "${PROGDIR}/zsh/oh-my-zsh/custom/themes"
     for plugin in "${PROGDIR}/zsh/plugins/"*; do
-        link_file "$plugin" "${PROGDIR}/zsh/oh-my-zsh/custom/plugins"
+        local dest="${PROGDIR}/zsh/oh-my-zsh/custom/plugins/$(basename $plugin)"
+        link_file "$plugin" "$dest"
     done
     link_file "${PROGDIR}/zsh/zshrc" "${HOME}/.zshrc"
     link_file "${PROGDIR}/profile" "${HOME}/.profile"
