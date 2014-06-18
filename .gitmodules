@@ -2,5 +2,5 @@
 	path = Vundle.vim
 	url = https://github.com/gmarik/Vundle.vim
 [submodule "oh-my-zsh"]
-	path = oh-my-zsh
+	path = zsh/oh-my-zsh
 	url = https://github.com/robbyrussell/oh-my-zsh

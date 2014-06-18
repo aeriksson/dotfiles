@@ -72,8 +72,8 @@ setup_vim() {
 
 setup_zsh() {
     command_exists zsh || install_command zsh
-    link_file "${PROGDIR}/oh-my-zsh" "${HOME}/.oh-my-zsh"
-    link_file "${PROGDIR}/zshrc" "${HOME}/.zshrc"
+    link_file "${PROGDIR}/zsh/oh-my-zsh" "${HOME}/.oh-my-zsh"
+    link_file "${PROGDIR}/zsh/zshrc" "${HOME}/.zshrc"
     link_file "${PROGDIR}/profile" "${HOME}/.profile"
     link_file "${PROGDIR}/aliases" "${HOME}/.aliases"
 }
