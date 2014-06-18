@@ -79,6 +79,10 @@ setup_zsh() {
         local dest="${PROGDIR}/zsh/oh-my-zsh/custom/plugins/$(basename $plugin)"
         link_file "$plugin" "$dest"
     done
+    for script in "${PROGDIR}/zsh/"*.zsh; do
+        local dest="${PROGDIR}/zsh/oh-my-zsh/custom/$(basename $script)"
+        link_file "$script" "$dest"
+    done
     link_file "${PROGDIR}/zsh/zshrc" "${HOME}/.zshrc"
     link_file "${PROGDIR}/profile" "${HOME}/.profile"
     link_file "${PROGDIR}/aliases" "${HOME}/.aliases"
