@@ -7,11 +7,8 @@ readonly PROGDIR=$(cd "$(dirname "$0")" && pwd)
 readonly PLATFORM=$(uname)
 
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
-readonly VUNDLE_URL="https://github.com/gmarik/Vundle.vim.git"
 readonly OH_MY_ZSH_URL="https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh"
 readonly CURL_FLAGS="-fsSL"
-
-readonly VUNDLE_PATH="${HOME}/.vim/bundle/Vundle.vim"
 
 link_file() {
     local source=$1
@@ -68,8 +65,8 @@ setup_git() {
 setup_vim() {
     command_exists vim || install_command vim
     link_file "${PROGDIR}/vimrc" "${HOME}/.vimrc"
+    link_file "${PROGDIR}/Vundle.vim" "${HOME}/.vim/bundle/"
     mkdir -p "${HOME}/.vim/undodir"
-    is_dir "$VUNDLE_PATH" || git clone "$VUNDLE_URL" "$VUNDLE_PATH"
     vim +PluginInstall +qall
 }
 
