@@ -60,10 +60,12 @@ set smartindent
 set wrap
 
 " Enable persistent undo
-set undodir=~/.vim/undodir
-set undofile
+if has('persistent_undo')
+    set undodir=~/.vim/undodir
+    set undofile
+    set undoreload=10000
+endif
 set undolevels=1000
-set undoreload=10000
 
 " Enable mouse
 if has("mouse")
