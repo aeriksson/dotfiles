@@ -24,14 +24,18 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'scrooloose/nerdtree'
 " Easy commenting
 Bundle 'tomtom/tcomment_vim'
-" Autocomplete
-Bundle 'Valloric/YouCompleteMe'
+if v:version >= 703
+    " Autocomplete
+    Bundle 'Valloric/YouCompleteMe'
+endif
 " Syntax checks
 Bundle 'scrooloose/syntastic'
 " Class outlines
 Bundle 'majutsushi/tagbar'
-" Better numbering
-Bundle 'myusuf3/numbers.vim'
+if v:version >= 703
+    " Better numbering
+    Bundle 'myusuf3/numbers.vim'
+endif
 " Faster editing
 Bundle 'terryma/vim-multiple-cursors'
 " Nicer statusline
