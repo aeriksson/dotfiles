@@ -59,8 +59,8 @@ install_command() {
 }
 
 setup_git() {
-    link_file "${PROGDIR}/gitignore_global" "${HOME}/.gitignore_global"
-    link_file "${PROGDIR}/gitconfig" "${HOME}/.gitconfig"
+    link_file "${PROGDIR}/git/gitignore_global" "${HOME}/.gitignore_global"
+    link_file "${PROGDIR}/git/gitconfig" "${HOME}/.gitconfig"
 }
 
 setup_vim() {
