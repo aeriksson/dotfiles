@@ -4,6 +4,9 @@ set -o pipefail
 set -o nounset
 
 readonly PROGDIR=$(cd "$(dirname "$0")" && pwd)
+readonly ZSHDIR="${PROGDIR}/zsh"
+readonly VIMDIR="${PROGDIR}/vim"
+readonly GITDIR="${PROGDIR}/git"
 readonly PLATFORM=$(uname)
 
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
@@ -59,31 +62,31 @@ install_command() {
 }
 
 setup_git() {
-    link_file "${PROGDIR}/git/gitignore_global" "${HOME}/.gitignore_global"
-    link_file "${PROGDIR}/git/gitconfig" "${HOME}/.gitconfig"
+    link_file "${GITDIR}/gitignore_global" "${HOME}/.gitignore_global"
+    link_file "${GITDIR}/gitconfig" "${HOME}/.gitconfig"
 }
 
 setup_vim() {
     command_exists vim || install_command vim
-    link_file "${PROGDIR}/vim/vimrc" "${HOME}/.vimrc"
-    link_file "${PROGDIR}/vim/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
+    link_file "${VIMDIR}/vimrc" "${HOME}/.vimrc"
+    link_file "${VIMDIR}/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
     mkdir -p "${HOME}/.vim/undodir"
     vim +PluginInstall +qall
 }
 
 setup_zsh() {
     command_exists zsh || install_command zsh
-    link_file "${PROGDIR}/zsh/oh-my-zsh/" "${HOME}/.oh-my-zsh"
-    link_file "${PROGDIR}/zsh/themes" "${PROGDIR}/zsh/oh-my-zsh/custom/themes"
-    for plugin in "${PROGDIR}/zsh/plugins/"*; do
-        local dest="${PROGDIR}/zsh/oh-my-zsh/custom/plugins/$(basename $plugin)"
+    link_file "${ZSHDIR}/oh-my-zsh/" "${HOME}/.oh-my-zsh"
+    link_file "${ZSHDIR}/themes" "${ZSHDIR}/oh-my-zsh/custom/themes"
+    for plugin in "${ZSHDIR}/plugins/"*; do
+        local dest="${ZSHDIR}/oh-my-zsh/custom/plugins/$(basename $plugin)"
         link_file "$plugin" "$dest"
     done
-    for script in "${PROGDIR}/zsh/"*.zsh; do
-        local dest="${PROGDIR}/zsh/oh-my-zsh/custom/$(basename $script)"
+    for script in "${ZSHDIR}/"*.zsh; do
+        local dest="${ZSHDIR}/oh-my-zsh/custom/$(basename $script)"
         link_file "$script" "$dest"
     done
-    link_file "${PROGDIR}/zsh/zshrc" "${HOME}/.zshrc"
+    link_file "${ZSHDIR}/zshrc" "${HOME}/.zshrc"
     link_file "${PROGDIR}/profile" "${HOME}/.profile"
     link_file "${PROGDIR}/aliases" "${HOME}/.aliases"
 }
