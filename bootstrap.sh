@@ -72,7 +72,7 @@ setup_vim() {
 
 setup_zsh() {
     command_exists zsh || install_command zsh
-    is_dir "${HOME}/.oh-my-zsh" || bash -c "$(curl ${CURL_FLAGS} ${OH_MY_ZSH_URL})"
+    link_file "${PROGDIR}/oh-my-zsh" "${HOME}/.oh-my-zsh"
     link_file "${PROGDIR}/zshrc" "${HOME}/.zshrc"
     link_file "${PROGDIR}/profile" "${HOME}/.profile"
     link_file "${PROGDIR}/aliases" "${HOME}/.aliases"
