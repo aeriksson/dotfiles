@@ -13,7 +13,9 @@ link_file() {
     local source=$1
     local target=$2
 
-    ln -sni "$source" "$target"
+    if [[ ! -L "$target" || $(readlink "$target") != "$source" ]]; then
+        ln -sni "$source" "$target"
+    fi
 }
 
 setup_homebrew() {
