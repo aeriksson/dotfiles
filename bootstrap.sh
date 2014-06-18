@@ -47,8 +47,15 @@ install_command() {
     if [[ "$PLATFORM" == "Darwin" ]]; then
         setup_homebrew
         brew install "$command"
+    elif [[ "$PLATFORM" == "Linux" ]]; then
+        if command_exists yum; then
+            sudo yum install "$command"
+        else
+            echo "ERROR: unknown package manager."
+            exit 1
+        fi
     else
-        echo "ERROR: git not found."
+        echo "ERROR: unknown OS."
         exit 1
     fi
 }
