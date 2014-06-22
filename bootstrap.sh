@@ -12,7 +12,13 @@ readonly PLATFORM=$(uname)
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
 readonly CURL_FLAGS="-fsSL"
 
-link_file() {
+is_cmd() { hash "$1" 2> /dev/null && return 0 || return 1 }
+
+is_dir() { [[ -d "$1" ]] && return 0 || return 1 }
+
+fail() { echo "ERROR: $1"; exit 1 }
+
+add_link() {
     local source=$1
     local target=$2
 
@@ -22,73 +28,54 @@ link_file() {
 }
 
 setup_homebrew() {
-    command_exists homebrew ||
-        \ ruby -e "$(curl ${CURL_FLAGS} ${HOMEBREW_URL})"
+    is_cmd homebrew || ruby -e "$(curl ${CURL_FLAGS} ${HOMEBREW_URL})"
 }
 
-command_exists() {
-    local command=$1
-
-    if hash "$command" 2>/dev/null; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-is_dir() {
-    local dir=$1
-
-    [[ -d "$dir" ]]
-}
-
-install_command() {
-    local command=$1
+install_cmd() {
+    local cmd=$1
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
         setup_homebrew
-        brew install "$command"
+        brew install "$cmd"
     elif [[ "$PLATFORM" == "Linux" ]]; then
-        if command_exists yum; then
-            sudo yum install "$command"
+        if is_cmd yum; then
+            sudo yum install "$cmd"
         else
-            echo "ERROR: unknown package manager."
-            exit 1
+            fail "Unknown package manager"
         fi
     else
-        echo "ERROR: unknown OS."
-        exit 1
+         fail "Unknown OS."
     fi
 }
 
 setup_git() {
-    link_file "${GITDIR}/gitignore_global" "${HOME}/.gitignore_global"
-    link_file "${GITDIR}/gitconfig" "${HOME}/.gitconfig"
+    add_link "${GITDIR}/gitignore_global" "${HOME}/.gitignore_global"
+    add_link "${GITDIR}/gitconfig" "${HOME}/.gitconfig"
 }
 
 setup_vim() {
-    command_exists vim || install_command vim
-    link_file "${VIMDIR}/vimrc" "${HOME}/.vimrc"
-    link_file "${VIMDIR}/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
+    is_cmd vim || install_cmd vim
+    add_link "${VIMDIR}/vimrc" "${HOME}/.vimrc"
+    add_link "${VIMDIR}/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
     mkdir -p "${HOME}/.vim/undodir"
     vim +PluginInstall +qall
 }
 
 setup_zsh() {
-    command_exists zsh || install_command zsh
-    link_file "${ZSHDIR}/oh-my-zsh/" "${HOME}/.oh-my-zsh"
-    link_file "${ZSHDIR}/themes" "${ZSHDIR}/oh-my-zsh/custom/themes"
+    is_cmd zsh || install_cmd zsh
+    add_link "${ZSHDIR}/oh-my-zsh/" "${HOME}/.oh-my-zsh"
+    add_link "${ZSHDIR}/themes" "${ZSHDIR}/oh-my-zsh/custom/themes"
     for plugin in "${ZSHDIR}/plugins/"*; do
         local dest="${ZSHDIR}/oh-my-zsh/custom/plugins/$(basename $plugin)"
-        link_file "$plugin" "$dest"
+        add_link "$plugin" "$dest"
     done
     for script in "${ZSHDIR}/"*.zsh; do
         local dest="${ZSHDIR}/oh-my-zsh/custom/$(basename $script)"
-        link_file "$script" "$dest"
+        add_link "$script" "$dest"
     done
-    link_file "${ZSHDIR}/zshrc" "${HOME}/.zshrc"
-    link_file "${PROGDIR}/profile" "${HOME}/.profile"
-    link_file "${PROGDIR}/aliases" "${HOME}/.aliases"
+    add_link "${ZSHDIR}/zshrc" "${HOME}/.zshrc"
+    add_link "${PROGDIR}/profile" "${HOME}/.profile"
+    add_link "${PROGDIR}/aliases" "${HOME}/.aliases"
 }
 
 setup_git
