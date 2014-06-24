@@ -46,8 +46,14 @@ prompt_segment() {
 
 string_to_color() {
   local -a clrs
+  hashcmd=$({ hash md5 && echo md5 || { hash md5sum && echo md5sum } } 2> /dev/null)
   clrs=(yellow green cyan default magenta red white blue)
-  clr=$clrs[$(echo "$1" | md5 | grep -o "[1-8]" | head -n 1)]
+
+  if [[ -n $hashcmd ]]; then
+    clr=$clrs[$(echo "$1" | "$hashcmd" | grep -o "[1-8]" | head -n 1)]
+  else
+    clr=default
+  fi
 }
 
 # End the prompt, closing any open segments
