@@ -147,8 +147,12 @@ nnoremap <c-l> <c-w>l
 set whichwrap=h,l,b,s,~,[,]
 set list
 autocmd Syntax make,gitcommit set nolist
-autocmd Syntax c,cpp set colorcolumn=120
-autocmd Syntax python set colorcolumn=100
+
+" delimit specific line width
+if has('persistent_undo')
+  autocmd Syntax c,cpp set colorcolumn=120
+  autocmd Syntax python set colorcolumn=100
+endif
 
 " Clear search highlight.
 nnoremap <silent> <c-i> :nohlsearch<CR><c-i>
