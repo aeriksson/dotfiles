@@ -31,8 +31,8 @@ source ~/.aliases
 # Autocomplete special directories
 zstyle ':completion:*' special-dirs true
 
-# CTRL-D won't close the root terminal
-if [ $SHLVL -eq 1 ]; then
+# CTRL-D won't close the root terminal (unless logged in through SSH)
+if [[ "$SHLVL" -eq 1 && -z "$SSH_CLIENT" && -z "$SSH_TTY" ]]; then
   setopt ignoreeof
 else
   unsetopt ignoreeof
