@@ -44,6 +44,12 @@ prompt_segment() {
   [[ -n $3 ]] && echo -n $3
 }
 
+string_to_color() {
+  local -a clrs
+  clrs=(yellow green cyan default magenta red white blue)
+  clr=$clrs[$(echo "$1" | md5 | grep -o "[1-8]" | head -n 1)]
+}
+
 # End the prompt, closing any open segments
 prompt_end() {
   if [[ -n $CURRENT_BG ]]; then
@@ -63,7 +69,8 @@ prompt_context() {
   local user=`whoami`
 
   if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment black default "%(!.%{%F{yellow}%}.)$user@%m"
+    string_to_color "${user}$(hostname -s)"
+    prompt_segment black "$clr" "%(!.%{%F{yellow}%}.)$user@%m"
   fi
 }
 
