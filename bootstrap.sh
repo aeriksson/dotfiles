@@ -13,11 +13,17 @@ readonly PLATFORM=$(uname)
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
 readonly CURL_FLAGS="-fsSL"
 
-is_cmd() { hash "$1" 2> /dev/null && return 0 || return 1 }
+is_cmd() {
+    hash "$1" 2> /dev/null && return 0 || return 1
+}
 
-is_dir() { [[ -d "$1" ]] && return 0 || return 1 }
+is_dir() {
+    [[ -d "$1" ]] && return 0 || return 1
+}
 
-fail() { echo "ERROR: $1"; exit 1 }
+fail() {
+    echo "ERROR: $1"; exit 1
+}
 
 add_link() {
     local source=$1
