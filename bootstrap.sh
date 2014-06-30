@@ -7,6 +7,7 @@ readonly PROGDIR=$(cd "$(dirname "$0")" && pwd)
 readonly ZSHDIR="${PROGDIR}/zsh"
 readonly VIMDIR="${PROGDIR}/vim"
 readonly GITDIR="${PROGDIR}/git"
+readonly TMUXDIR="${PROGDIR}/tmux"
 readonly PLATFORM=$(uname)
 
 readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
@@ -78,6 +79,15 @@ setup_zsh() {
     add_link "${PROGDIR}/aliases" "${HOME}/.aliases"
 }
 
+setup_tmux() {
+    if [[ "$PLATFORM" == "Darwin" ]]; then
+        is_cmd reattach-to-user-namespace || install_cmd reattach-to-user-namespace
+        add_link "${TMUXDIR}/tmux.osx.conf" "${HOME}/.tmux.platform.conf"
+    fi
+    add_link "${TMUXDIR}/tmux.conf" "${HOME}/.tmux.conf"
+}
+
 setup_git
 setup_vim
 setup_zsh
+setup_tmux
