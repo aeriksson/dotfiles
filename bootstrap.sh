@@ -10,7 +10,7 @@ readonly GITDIR="${PROGDIR}/git"
 readonly TMUXDIR="${PROGDIR}/tmux"
 readonly PLATFORM=$(uname)
 
-readonly HOMEBREW_URL="https://raw.github.com/Homebrew/homebrew/go/install"
+readonly HOMEBREW_URL="https://raw.githubusercontent.com/Homebrew/install/master/install"
 readonly CURL_FLAGS="-fsSL"
 
 is_cmd() {
