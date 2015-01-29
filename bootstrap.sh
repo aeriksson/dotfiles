@@ -71,6 +71,10 @@ cask_has() {
     brew cask list "$1" > /dev/null 2>&1 && return 0 || return 1
 }
 
+pip_has() {
+    pip show "$1" > /dev/null 2>&1 && return 0 || return 1
+}
+
 install() {
     local cmd=$1
     if [[ "$PLATFORM" == "Darwin" ]]; then
@@ -90,6 +94,17 @@ install() {
     fi
 }
 
+prompt() {
+    while true; do
+        read -p "$1?[yn] " yn
+        case $yn in
+            [Yy]* ) return 0;;
+            [Nn]* ) return 1;;
+            * ) echo "Answer yes or no.";;
+        esac
+    done
+}
+
 set_login_shell() {
     desired=$1
 
@@ -103,6 +118,37 @@ set_login_shell() {
         log "Changing login shell from ${current} to ${desired}."
         chsh -s "$desired"
     fi
+}
+
+optional_brew_install() {
+    local ys=""
+    for pkg; do
+        if (! brew_has "$pkg") && prompt "Install ${pkg}"; then
+            ys="${ys} ${pkg}"
+        fi
+    done
+    [ -z "$ys" ] || brew install $ys
+}
+
+optional_cask_install() {
+    ys=""
+    for pkg; do
+        if (! cask_has "$pkg") && prompt "Install ${pkg}"; then
+            ys="${ys} ${pkg}"
+        fi
+    done
+    [ -z "$ys" ] || brew cask install $ys
+}
+
+optional_pip_install() {
+    ys=""
+    for pkg; do
+        pkg=$(echo "$pkg" | cut -d'[' -f1)
+        if (! pip_has "$pkg") && prompt "Install ${pkg}"; then
+            ys="${ys} ${pkg}"
+        fi
+    done
+    [ -z "$ys" ] || pip install $ys
 }
 
 setup_osx() {
@@ -166,6 +212,21 @@ setup_zsh() {
     set_login_shell $(which zsh)
 }
 
+setup_packages() {
+    log_header "Adding optional packages"
+
+    if [[ "$PLATFORM" == "Darwin" ]]; then
+        log "Adding brew packages..."
+        optional_brew_install vim python leiningen cabal-install
+
+        log "Adding cask packages..."
+        optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio
+    fi
+
+    log "Adding Python packages..."
+    optional_pip_install virtualenvwrapper scipy numpy matplotlib ipython[all] nose glances
+}
+
 setup_tmux() {
     log_header "Setting up tmux"
 
@@ -181,3 +242,4 @@ setup_vim
 setup_zsh
 setup_tmux
 [[ "$PLATFORM" == "Darwin" ]] && setup_osx
+setup_packages
