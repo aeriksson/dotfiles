@@ -10,6 +10,7 @@ readonly GITDIR="${PROGDIR}/git"
 readonly TMUXDIR="${PROGDIR}/tmux"
 readonly PLATFORM=$(uname)
 
+readonly VIM_PLUG_URL="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 readonly HOMEBREW_URL="https://raw.githubusercontent.com/Homebrew/install/master/install"
 readonly CURL_FLAGS="-fsSL"
 
@@ -53,6 +54,20 @@ setup_homebrew() {
     is_cmd homebrew || ruby -e "$(curl ${CURL_FLAGS} ${HOMEBREW_URL})"
 }
 
+download() {
+    local from=$1
+    if [ -z $2 ]; then
+        log "Downloading $from."
+        curl -fsSL "$from"
+    else
+        local to=$2
+        if [ ! -f "$to" ]; then
+            log "Downloading ${from} to ${to}."
+            curl -fsSLo "$to" "$from"
+        fi
+    fi
+}
+
 make_dir() {
     [ -d "$1" ] || (log "Creating directory $1."; mkdir -p $1 2> /dev/null)
 }
@@ -88,7 +103,7 @@ setup_vim() {
     is_cmd vim || install_cmd vim
     make_dir "${HOME}/.vim/undodir"
     make_dir "${HOME}/.vim/autoload"
-    curl -fLo "${HOME}/.vim/autoload/plug.vim" https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    download "$VIM_PLUG_URL" "${HOME}/.vim/autoload/plug.vim"
 
     add_link "${VIMDIR}/vimrc" "${HOME}/.vimrc"
     vim +PlugInstall +qall
