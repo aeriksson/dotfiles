@@ -90,6 +90,21 @@ install_cmd() {
     fi
 }
 
+set_login_shell() {
+    desired=$1
+
+    if [[ "$PLATFORM" == "Darwin" ]]; then
+        current=$(dscl . -read /Users/$(whoami) UserShell | cut -d' ' -f2)
+    elif [[ "$PLATFORM" == "Linux" ]]; then
+        current=$(getent passwd $LOGNAME | cut -d: -f7)
+    fi
+
+    if [[ "$current" != "$desired" ]]; then
+        log "Changing login shell from ${current} to ${desired}."
+        chsh -s "$desired"
+    fi
+}
+
 setup_git() {
     log_header "Setting up git"
 
@@ -126,6 +141,8 @@ setup_zsh() {
     add_link "${ZSHDIR}/zshrc" "${HOME}/.zshrc"
     add_link "${PROGDIR}/profile" "${HOME}/.profile"
     add_link "${PROGDIR}/aliases" "${HOME}/.aliases"
+
+    set_login_shell $(which zsh)
 }
 
 setup_tmux() {
