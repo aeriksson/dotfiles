@@ -38,6 +38,10 @@ setup_homebrew() {
     is_cmd homebrew || ruby -e "$(curl ${CURL_FLAGS} ${HOMEBREW_URL})"
 }
 
+make_dir() {
+    [ -d "$1" ] || (log "Creating directory $1."; mkdir -p $1 2> /dev/null)
+}
+
 install_cmd() {
     local cmd=$1
 
@@ -62,11 +66,12 @@ setup_git() {
 
 setup_vim() {
     is_cmd vim || install_cmd vim
-    mkdir -p "${HOME}/.vim/undodir" 2> /dev/null
-    mkdir -p "${HOME}/.vim/bundle" 2> /dev/null
+    make_dir "${HOME}/.vim/undodir"
+    make_dir "${HOME}/.vim/autoload"
+    curl -fLo "${HOME}/.vim/autoload/plug.vim" https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
     add_link "${VIMDIR}/vimrc" "${HOME}/.vimrc"
-    add_link "${VIMDIR}/Vundle.vim/" "${HOME}/.vim/bundle/Vundle.vim"
-    vim +PluginInstall +qall
+    vim +PlugInstall +qall
 }
 
 setup_zsh() {

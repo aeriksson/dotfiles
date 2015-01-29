@@ -1,49 +1,82 @@
 " vim config
+
+" Requires vim-plug:
+" `mkdir -p ~/.vim/autoload`
+" `curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim`
 "
-" Requires Vundle - `git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim`
 " `mkdir -p ~/.vim/undodir` for persistent undo.
 
 " Enable plugins
 set nocompatible
 filetype off
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-
-Bundle 'gmarik/vundle'
+call plug#begin('~/.vim/plugged')
 
 " Sensible defaults
-Bundle 'tpope/vim-sensible'
+Plug 'tpope/vim-sensible'
 " Git integration
-Bundle 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 " Nice theme
-Bundle 'altercation/vim-colors-solarized'
+Plug 'altercation/vim-colors-solarized'
 " Better navigation
-Bundle 'kien/ctrlp.vim'
+Plug 'kien/ctrlp.vim'
 " Better naviagtion
-Bundle 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Easy commenting
-Bundle 'tomtom/tcomment_vim'
+Plug 'tomtom/tcomment_vim'
 if v:version >= 703
     " Autocomplete
-    Bundle 'Valloric/YouCompleteMe'
+    Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 endif
 " Syntax checks
-Bundle 'scrooloose/syntastic'
+Plug 'scrooloose/syntastic'
 " Class outlines
-Bundle 'majutsushi/tagbar'
+Plug 'majutsushi/tagbar', { 'on': 'tagbar' }
 if v:version >= 703
-    " Better numbering
-    Bundle 'myusuf3/numbers.vim'
+    " Better line numbering
+    Plug 'myusuf3/numbers.vim'
 endif
 " Faster editing
-Bundle 'terryma/vim-multiple-cursors'
+Plug 'terryma/vim-multiple-cursors'
 " Nicer statusline
-Bundle 'bling/vim-airline'
+Plug 'bling/vim-airline'
 " Better undo
-Bundle 'sjl/gundo.vim'
+Plug 'mbbill/undotree'
+" Autocomplete
+Plug 'Shougo/neocomplcache.vim'
+" Better than grep
+Plug 'rking/ag.vim'
+" Better C++ highlighting
+Plug 'octol/vim-cpp-enhanced-highlight', { 'for': 'cpp' }
+" Colorful parentheses
+Plug 'kien/rainbow_parentheses.vim'
+" Plug 'klen/python-mode'
+" No idea what this does
+Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
+" Nicer Haskell
+Plug 'lukerandall/haskellmode-vim', { 'for': 'haskell'}
+" Nicer Scala
+Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
+" Required for vim-fireplace
+Plug 'tpope/vim-classpath', { 'for': 'clojure' }
+" Better Clojure
+Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+" Better S-expression editing
+Plug 'vim-scripts/paredit.vim', { 'for': ['clojure', 'scheme'] }
 
-call vundle#end()
+call plug#end()
+
+let g:rbpt_colorpairs = [
+  \ [ '13', '#6c71c4'],
+  \ [ '5',  '#d33682'],
+  \ [ '1',  '#dc322f'],
+  \ [ '9',  '#cb4b16'],
+  \ [ '3',  '#b58900'],
+  \ [ '2',  '#859900'],
+  \ [ '6',  '#2aa198'],
+  \ [ '4',  '#268bd2'],
+  \ ]
+
 filetype plugin indent on
 
 " General
@@ -99,7 +132,7 @@ set number
 " YouCompleteMe
 let g:ycm_confirm_extra_conf = 0
 " Keep from overriding syntax checker
-let g:ycm_register_as_syntastic_checker = 1
+let g:ycm_register_as_syntastic_checker = 0
 
 " Use Syntastic linting in Python
 let g:pymode_lint = 0
@@ -122,7 +155,7 @@ let g:airline_powerline_fonts = 1
 set noreadonly
 
 " Align new rows with parentheses
-set cino=(0
+autocmd Syntax c,cpp set cino=(0
 
 set nocursorcolumn
 set nocursorline
@@ -144,14 +177,13 @@ nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
 
 " Mark unwanted whitespace
-set whichwrap=h,l,b,s,~,[,]
 set list
 autocmd Syntax make,gitcommit set nolist
 
 " delimit specific line width
 if has('persistent_undo')
   autocmd Syntax c,cpp set colorcolumn=120
-  autocmd Syntax python set colorcolumn=100
+  autocmd Syntax python set colorcolumn=80
 endif
 
 " Clear search highlight.
@@ -179,7 +211,14 @@ nmap _= :call Preserve("normal gg=G")<CR>
 let g:ctrlp_root_markers = ['\.git']
 let g:ctrlp_by_filename = 1 " search by filename (not full path) as default.
 let g:ctrlp_dotfiles = 0 " do not search inside dot files and dirs.
-let g:ctrlp_custom_ignore = {'dir': 'build', 'file': '\v\.(o|a|so)$'}
+" let g:ctrlp_custom_ignore = {'dir': 'build', 'file': '\v\.(o|a|so)$'}
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-standard --others']
 
 " Ctags
 set tags=./tags;~/code
+
+" Enable rainbow parentheses for all buffers
+" au VimEnter * RainbowParenthesesActivate
+" au BufEnter * RainbowParenthesesLoadRound
+" au BufEnter * RainbowParenthesesLoadSquare
+" au BufEnter * RainbowParenthesesLoadBraces
