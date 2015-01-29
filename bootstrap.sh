@@ -50,10 +50,6 @@ add_link() {
     fi
 }
 
-setup_homebrew() {
-    is_cmd homebrew || ruby -e "$(curl ${CURL_FLAGS} ${HOMEBREW_URL})"
-}
-
 download() {
     local from=$1
     if [ -z $2 ]; then
@@ -103,6 +99,15 @@ set_login_shell() {
         log "Changing login shell from ${current} to ${desired}."
         chsh -s "$desired"
     fi
+}
+
+setup_homebrew() {
+    log_header "Setting up homebrew"
+
+    is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
+    brew update
+    brew list brew-cask > /dev/null 2>&1 || brew install caskroom/cask/brew-cask
+    brew doctor
 }
 
 setup_git() {
@@ -156,6 +161,7 @@ setup_tmux() {
 }
 
 setup_git
+[[ "$PLATFORM" == "Darwin" ]] && setup_homebrew
 setup_vim
 setup_zsh
 setup_tmux
