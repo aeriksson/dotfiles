@@ -1,2 +1,2 @@
-export PATH=/usr/local/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
+export PATH=/usr/local/sbin:$PATH
 export EDITOR='vim'

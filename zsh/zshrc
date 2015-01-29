@@ -16,10 +16,6 @@ plugins=(
 DISABLE_CORRECTION="true"
 COMPLETION_WAITING_DOTS="true"
 
-# Paths
-export PATH=/usr/local/bin:$PATH:/usr/bin:/bin:/usr/sbin:/sbin
-export EDITOR='vim'
-
 # Init oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
