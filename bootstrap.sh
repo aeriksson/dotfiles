@@ -13,6 +13,24 @@ readonly PLATFORM=$(uname)
 readonly HOMEBREW_URL="https://raw.githubusercontent.com/Homebrew/install/master/install"
 readonly CURL_FLAGS="-fsSL"
 
+colorize() {
+    local color=$1
+    local msg=$2
+    echo "$(tput setaf ${color})${msg}$(tput sgr 0)"
+}
+
+log() {
+    colorize 4 "$1"
+}
+
+fail() {
+    colorize 1 "ERROR: $1"; exit 1
+}
+
+log_header() {
+    log "*****${1}*****"
+}
+
 is_cmd() {
     hash "$1" 2> /dev/null && return 0 || return 1
 }
@@ -21,15 +39,12 @@ is_dir() {
     [[ -d "$1" ]] && return 0 || return 1
 }
 
-fail() {
-    echo "ERROR: $1"; exit 1
-}
-
 add_link() {
     local source=$1
     local target=$2
 
     if [[ ! -L "$target" || $(readlink "$target") != "$source" ]]; then
+        log "Linking ${source} to ${target}."
         ln -sni "$source" "$target"
     fi
 }
@@ -44,6 +59,7 @@ make_dir() {
 
 install_cmd() {
     local cmd=$1
+    log "Attempting to install ${cmd}."
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
         setup_homebrew
@@ -60,11 +76,15 @@ install_cmd() {
 }
 
 setup_git() {
+    log_header "Setting up git"
+
     add_link "${GITDIR}/gitignore_global" "${HOME}/.gitignore_global"
     add_link "${GITDIR}/gitconfig" "${HOME}/.gitconfig"
 }
 
 setup_vim() {
+    log_header "Setting up vim"
+
     is_cmd vim || install_cmd vim
     make_dir "${HOME}/.vim/undodir"
     make_dir "${HOME}/.vim/autoload"
@@ -75,6 +95,8 @@ setup_vim() {
 }
 
 setup_zsh() {
+    log_header "Setting up zsh"
+
     is_cmd zsh || install_cmd zsh
     add_link "${ZSHDIR}/oh-my-zsh/" "${HOME}/.oh-my-zsh"
     add_link "${ZSHDIR}/themes" "${ZSHDIR}/oh-my-zsh/custom/themes"
@@ -92,6 +114,8 @@ setup_zsh() {
 }
 
 setup_tmux() {
+    log_header "Setting up tmux"
+
     if [[ "$PLATFORM" == "Darwin" ]]; then
         is_cmd reattach-to-user-namespace || install_cmd reattach-to-user-namespace
         add_link "${TMUXDIR}/tmux.osx.conf" "${HOME}/.tmux.platform.conf"
