@@ -220,7 +220,7 @@ setup_packages() {
         optional_brew_install vim python leiningen cabal-install
 
         log "Adding cask packages..."
-        optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio
+        optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio firefoxdeveloperedition
     fi
 
     log "Adding Python packages..."
