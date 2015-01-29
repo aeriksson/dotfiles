@@ -12,7 +12,6 @@ readonly PLATFORM=$(uname)
 
 readonly VIM_PLUG_URL="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 readonly HOMEBREW_URL="https://raw.githubusercontent.com/Homebrew/install/master/install"
-readonly CURL_FLAGS="-fsSL"
 
 colorize() {
     local color=$1
@@ -34,10 +33,6 @@ log_header() {
 
 is_cmd() {
     hash "$1" 2> /dev/null && return 0 || return 1
-}
-
-is_dir() {
-    [[ -d "$1" ]] && return 0 || return 1
 }
 
 add_link() {
