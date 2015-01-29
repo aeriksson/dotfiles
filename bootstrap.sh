@@ -63,15 +63,24 @@ make_dir() {
     [ -d "$1" ] || (log "Creating directory $1."; mkdir -p $1 2> /dev/null)
 }
 
-install_cmd() {
-    local cmd=$1
-    log "Attempting to install ${cmd}."
+brew_has() {
+    brew list "$1" > /dev/null 2>&1 && return 0 || return 1
+}
 
+cask_has() {
+    brew cask list "$1" > /dev/null 2>&1 && return 0 || return 1
+}
+
+install() {
+    local cmd=$1
     if [[ "$PLATFORM" == "Darwin" ]]; then
-        setup_homebrew
-        brew install "$cmd"
+        if ! brew_has "$cmd"; then
+            log "Installing ${cmd}."
+            brew install "$cmd"
+        fi
     elif [[ "$PLATFORM" == "Linux" ]]; then
         if is_cmd yum; then
+            log "Attempting to install ${cmd}."
             sudo yum install "$cmd"
         else
             fail "Unknown package manager"
@@ -96,13 +105,25 @@ set_login_shell() {
     fi
 }
 
-setup_homebrew() {
-    log_header "Setting up homebrew"
+setup_osx() {
+    log_header "Setting up osx"
 
     is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
-    brew update
-    brew list brew-cask > /dev/null 2>&1 || brew install caskroom/cask/brew-cask
-    brew doctor
+
+    log "Updating brew..."
+    brew update | grep -v "Already up-to-date." || true
+    log "Upgrading brew..."
+    brew upgrade
+    brew_has brew-cask || brew install caskroom/cask/brew-cask
+    brew tap | grep "caskroom/versions" > /dev/null || brew tap caskroom/versions
+    log "Running brew doctor..."
+    brew doctor > /dev/null
+
+    log "Cleaning up brew..."
+    brew linkapps > /dev/null
+    brew cleanup
+    brew prune > /dev/null
+    brew cask cleanup > /dev/null
 }
 
 setup_git() {
@@ -115,7 +136,7 @@ setup_git() {
 setup_vim() {
     log_header "Setting up vim"
 
-    is_cmd vim || install_cmd vim
+    is_cmd vim || install vim
     make_dir "${HOME}/.vim/undodir"
     make_dir "${HOME}/.vim/autoload"
     download "$VIM_PLUG_URL" "${HOME}/.vim/autoload/plug.vim"
@@ -127,7 +148,7 @@ setup_vim() {
 setup_zsh() {
     log_header "Setting up zsh"
 
-    is_cmd zsh || install_cmd zsh
+    is_cmd zsh || install zsh
     add_link "${ZSHDIR}/oh-my-zsh/" "${HOME}/.oh-my-zsh"
     add_link "${ZSHDIR}/themes" "${ZSHDIR}/oh-my-zsh/custom/themes"
     for plugin in "${ZSHDIR}/plugins/"*; do
@@ -149,14 +170,14 @@ setup_tmux() {
     log_header "Setting up tmux"
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
-        is_cmd reattach-to-user-namespace || install_cmd reattach-to-user-namespace
+        install reattach-to-user-namespace
         add_link "${TMUXDIR}/tmux.osx.conf" "${HOME}/.tmux.platform.conf"
     fi
     add_link "${TMUXDIR}/tmux.conf" "${HOME}/.tmux.conf"
 }
 
 setup_git
-[[ "$PLATFORM" == "Darwin" ]] && setup_homebrew
 setup_vim
 setup_zsh
 setup_tmux
+[[ "$PLATFORM" == "Darwin" ]] && setup_osx
