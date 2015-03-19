@@ -188,7 +188,8 @@ setup_vim() {
     download "$VIM_PLUG_URL" "${HOME}/.vim/autoload/plug.vim"
 
     add_link "${VIMDIR}/vimrc" "${HOME}/.vimrc"
-    vim +PlugInstall +qall
+    vim +PlugUpgrade +qall
+    vim +PlugUpdate +qall
 }
 
 setup_zsh() {
