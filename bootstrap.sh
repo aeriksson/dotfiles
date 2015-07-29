@@ -131,7 +131,7 @@ optional_brew_install() {
 }
 
 optional_cask_install() {
-    ys=""
+    local ys=""
     for pkg; do
         if (! cask_has "$pkg") && prompt "Install ${pkg}"; then
             ys="${ys} ${pkg}"
@@ -141,7 +141,7 @@ optional_cask_install() {
 }
 
 optional_pip_install() {
-    ys=""
+    local ys=""
     for pkg; do
         pkg=$(echo "$pkg" | cut -d'[' -f1)
         if (! pip_has "$pkg") && prompt "Install ${pkg}"; then
@@ -151,11 +151,22 @@ optional_pip_install() {
     [ -z "$ys" ] || pip install $ys
 }
 
+pip_upgrade() {
+    for pkg; do
+        pip install --upgrade $pkg 2>&1 || grep -v "Requirement already up-to-date"
+    done
+}
+
 setup_osx() {
     log_header "Setting up osx"
 
-    is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
+    # log "Creating locate database..."
+    # if ! launchctl list | grep com.apple.locate > /dev/null; then
+    #     sudo launchctl bootstrap system /System/Library/LaunchDaemons/com.apple.locate.plist
+    # fi
 
+    log "Installing brew..."
+    is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
     log "Updating brew..."
     brew update | grep -v "Already up-to-date." || true
     log "Upgrading brew..."
@@ -213,19 +224,29 @@ setup_zsh() {
     set_login_shell $(which zsh)
 }
 
+setup_fonts() {
+    log "Setting up powerline fonts"
+    ./fonts/install.sh
+}
+
+setup_python() {
+    log_header "Setting up Python"
+
+    pip_upgrade setuptools distribute pip
+
+    optional_pip_install virtualenvwrapper scipy numpy matplotlib ipython[all] nose glances
+}
+
 setup_packages() {
     log_header "Adding optional packages"
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
         log "Adding brew packages..."
-        optional_brew_install vim python leiningen cabal-install
+        optional_brew_install vim python python3 pypy leiningen cabal-install irssi
 
         log "Adding cask packages..."
         optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio firefoxdeveloperedition
     fi
-
-    log "Adding Python packages..."
-    optional_pip_install virtualenvwrapper scipy numpy matplotlib ipython[all] nose glances
 }
 
 setup_tmux() {
@@ -244,3 +265,4 @@ setup_zsh
 setup_tmux
 [[ "$PLATFORM" == "Darwin" ]] && setup_osx
 setup_packages
+setup_python
