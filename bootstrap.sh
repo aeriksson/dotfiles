@@ -9,6 +9,7 @@ readonly VIMDIR="${PROGDIR}/vim"
 readonly GITDIR="${PROGDIR}/git"
 readonly TMUXDIR="${PROGDIR}/tmux"
 readonly PLATFORM=$(uname)
+readonly DISTRO=$([[ "$PLATFORM" != "" ]] && lsb_release -a 2>/dev/null | grep Des | sed 's/Des.*:\s*//')
 
 readonly VIM_PLUG_URL="https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 readonly HOMEBREW_URL="https://raw.githubusercontent.com/Homebrew/install/master/install"
@@ -196,12 +197,26 @@ setup_git() {
 setup_vim() {
     log_header "Setting up vim"
 
-    is_cmd vim || install vim
+    if [[ "$DISTRO" == "Ubuntu*" ]]; then
+	if $(grep -R neovim-ppa /etc/apt/sources.* >/dev/null 2>&1); then
+            # Add repository for neovim
+            install python-software-properties
+            sudo add-apt-repository ppa:neovim-ppa/stable
+            sudo apt-get update
+	fi
+    fi
+
+    is_cmd nvim || install neovim
     make_dir "${HOME}/.vim/undodir"
     make_dir "${HOME}/.vim/autoload"
+    make_dir "${HOME}/.local/share/nvim/site/autoload"
     download "$VIM_PLUG_URL" "${HOME}/.vim/autoload/plug.vim"
+    download "$VIM_PLUG_URL" "${HOME}/.local/share/nvim/site/autoload/plug.vim"
 
     add_link "${VIMDIR}/vimrc" "${HOME}/.vimrc"
+    mkdir -p "${HOME}/.config/nvim" 2>/dev/null
+    add_link "${HOME}/.vimrc" "${HOME}/.config/nvim/init.vim"
+
     vim +PlugUpgrade +qall
     vim +PlugUpdate +qall
 }
