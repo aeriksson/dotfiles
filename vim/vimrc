@@ -24,10 +24,8 @@ Plug 'kien/ctrlp.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Easy commenting
 Plug 'tomtom/tcomment_vim'
-if v:version >= 703
-    " Autocomplete
-    Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
-endif
+" Autocomplete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " Syntax checks
 Plug 'scrooloose/syntastic'
 " Class outlines
