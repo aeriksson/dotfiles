@@ -86,6 +86,9 @@ install() {
         if is_cmd yum; then
             log "Attempting to install ${cmd}."
             sudo yum install "$cmd"
+        elif is_cmd apt-get; then
+            log "Attempting to install ${cmd}."
+            sudo apt-get install "$cmd"
         else
             fail "Unknown package manager"
         fi
