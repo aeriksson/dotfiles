@@ -19,3 +19,7 @@ alias rsync-synchronize="rsync -avu --delete --progress -h"
 
 # brew
 alias brews='brew list -1'
+
+# vim
+alias vi='nvim'
+alias vim='nvim'
