@@ -18,18 +18,12 @@ Plug 'tpope/vim-sensible'
 Plug 'tpope/vim-fugitive'
 " Nice theme
 Plug 'altercation/vim-colors-solarized'
-" Better navigation
-Plug 'kien/ctrlp.vim'
-" Better naviagtion
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 " Easy commenting
 Plug 'tomtom/tcomment_vim'
-" Autocomplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 " Syntax checks
 Plug 'scrooloose/syntastic'
-" Class outlines
-Plug 'majutsushi/tagbar', { 'on': 'tagbar' }
+" Autocomplete
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 if v:version >= 703
     " Better line numbering
     Plug 'myusuf3/numbers.vim'
@@ -40,25 +34,12 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'bling/vim-airline'
 " Better undo
 Plug 'mbbill/undotree'
-" Autocomplete
-Plug 'Shougo/neocomplcache.vim'
 " Better than grep
 Plug 'rking/ag.vim'
-" Better C++ highlighting
-Plug 'octol/vim-cpp-enhanced-highlight', { 'for': 'cpp' }
 " Colorful parentheses
 Plug 'kien/rainbow_parentheses.vim'
-" Plug 'klen/python-mode'
-" No idea what this does
-Plug 'eagletmt/neco-ghc', { 'for': 'haskell' }
-" Nicer Haskell
-Plug 'lukerandall/haskellmode-vim', { 'for': 'haskell'}
-" Nicer Scala
-Plug 'derekwyatt/vim-scala', { 'for': 'scala' }
-" Required for vim-fireplace
-Plug 'tpope/vim-classpath', { 'for': 'clojure' }
-" Better Clojure
-Plug 'tpope/vim-fireplace', { 'for': 'clojure' }
+" Syntax highlighting
+Plug 'sheerun/vim-polyglot'
 " Better S-expression editing
 Plug 'vim-scripts/paredit.vim', { 'for': ['clojure', 'scheme'] }
 " Fuzzy finding
