@@ -13,17 +13,13 @@
     edit-untracked = !vim -p $(git ls-files --others --exclude-standard | sort -u)
     add-untracked = !git add $(git ls-files --others --exclude-standard | sort -u)
 
-[user]
-    name = Andre Eriksson
-    email = andre.eriksson@trioptima.com
-
 [push]
     default = simple
 
 [core]
     whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
     editor = vim
-    excludesfile = /Users/andree/.gitignore_global
+    excludesfile = ~/.gitignore_global
 
 [diff]
     tool = vimdiff
