@@ -144,21 +144,15 @@ optional_cask_install() {
     [ -z "$ys" ] || brew cask install $ys
 }
 
-optional_pip_install() {
-    local ys=""
-    for pkg; do
-        pkg=$(echo "$pkg" | cut -d'[' -f1)
-        if (! pip_has "$pkg") && prompt "Install ${pkg}"; then
-            ys="${ys} ${pkg}"
-        fi
-    done
-    [ -z "$ys" ] || pip install $ys
-}
-
 pip_upgrade() {
     for pkg; do
-        pip install --upgrade $pkg 2>&1 || grep -v "Requirement already up-to-date"
+        pip install --upgrade -q $pkg 2>&1 || grep -v "Requirement already up-to-date"
     done
+}
+
+init_repo() {
+    git submodule init
+    git submodule update
 }
 
 setup_osx() {
@@ -251,8 +245,6 @@ setup_python() {
     log_header "Setting up Python"
 
     pip_upgrade setuptools distribute pip
-
-    optional_pip_install virtualenvwrapper scipy numpy matplotlib ipython[all] nose glances
 }
 
 setup_packages() {
@@ -277,6 +269,7 @@ setup_tmux() {
     add_link "${TMUXDIR}/tmux.conf" "${HOME}/.tmux.conf"
 }
 
+init_repo
 setup_git
 setup_vim
 setup_zsh
