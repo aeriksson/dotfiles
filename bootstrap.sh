@@ -3,6 +3,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+cd $(dirname ${BASH_SOURCE[0]})
+
 readonly PROGDIR=$(cd "$(dirname "$0")" && pwd)
 readonly ZSHDIR="${PROGDIR}/zsh"
 readonly VIMDIR="${PROGDIR}/vim"
