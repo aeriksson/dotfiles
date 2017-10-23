@@ -246,7 +246,7 @@ setup_packages() {
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
         log "Adding brew packages..."
-        optional_brew_install vim python python3 pypy leiningen cabal-install irssi
+        optional_brew_install vim python python3 leiningen cabal-install irssi ag
 
         log "Adding cask packages..."
         optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio firefoxdeveloperedition
