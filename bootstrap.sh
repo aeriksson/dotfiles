@@ -160,24 +160,16 @@ init_repo() {
 setup_osx() {
     log_header "Setting up osx"
 
-    # log "Creating locate database..."
-    # if ! launchctl list | grep com.apple.locate > /dev/null; then
-    #     sudo launchctl bootstrap system /System/Library/LaunchDaemons/com.apple.locate.plist
-    # fi
-
     log "Installing brew..."
     is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
     log "Updating brew..."
     brew update | grep -v "Already up-to-date." || true
     log "Upgrading brew..."
     brew upgrade
-    brew_has brew-cask || brew install caskroom/cask/brew-cask
-    brew tap | grep "caskroom/versions" > /dev/null || brew tap caskroom/versions
     log "Running brew doctor..."
     brew doctor > /dev/null
 
     log "Cleaning up brew..."
-    brew linkapps > /dev/null
     brew cleanup
     brew prune > /dev/null
     brew cask cleanup > /dev/null
