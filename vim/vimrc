@@ -42,10 +42,18 @@ Plug 'kien/rainbow_parentheses.vim'
 Plug 'sheerun/vim-polyglot'
 " Better S-expression editing
 Plug 'vim-scripts/paredit.vim', { 'for': ['clojure', 'scheme'] }
+" Nicer Clojure setup
+Plug 'guns/vim-clojure-static'
+" Highlight Clojure vars
+Plug 'guns/vim-clojure-highlight'
 " Fuzzy finding
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-
+" Fireplace
+Plug 'tpope/vim-fireplace'
+Plug 'tpope/vim-salve'
 Plug 'edkolev/tmuxline.vim'
+" Jsonnet
+Plug 'google/vim-jsonnet'
 
 call plug#end()
 
@@ -166,7 +174,7 @@ autocmd Syntax make,gitcommit set nolist
 " delimit specific line width
 if has('persistent_undo')
   autocmd Syntax c,cpp set colorcolumn=120
-  autocmd Syntax python set colorcolumn=80
+  autocmd Syntax python,clojure set colorcolumn=80
 endif
 
 " Clear search highlight.
@@ -199,11 +207,14 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . --cached --exclude-
 " Ctags
 set tags=./tags;~/code
 
+" Evaluate Clojure buffers on load
+autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry
+
 " Enable rainbow parentheses for all buffers
 au VimEnter * RainbowParenthesesActivate
-au BufEnter * RainbowParenthesesLoadRound
-au BufEnter * RainbowParenthesesLoadSquare
-au BufEnter * RainbowParenthesesLoadBraces
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
 
 " better C-t
 nnoremap <C-t> :FZF<CR>
@@ -218,3 +229,5 @@ let g:tmuxline_preset = {
       \'z'    : '#H'}
 
 let g:syntastic_html_checkers=['']
+
+let g:clojure_align_subforms = 1
