@@ -20,6 +20,7 @@
     whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
     editor = vim
     excludesfile = ~/.gitignore_global
+    pager = diff-so-fancy | less --tabs=4 -RFX
 
 [diff]
     tool = vimdiff
@@ -33,11 +34,12 @@
     remote = green
 
 [color "diff"]
-    meta = yellow bold
+    meta = yellow
     frag = magenta bold
     old = red bold
     new = green bold
     whitespace = red reverse
+    commit = yellow bold
 
 [color "status"]
     added = yellow
@@ -46,3 +48,13 @@
 
 [format]
     pretty=%C(yellow)commit: %h%Cblue%d%Creset%nAuthor: %an%nDate:   %ad%n%n%w(0,4,4)%s%n%b
+
+[user]
+    name = André Eriksson
+    email = aeriksson@users.noreply.github.com
+
+[color "diff-highlight"]
+    oldNormal = red bold
+    oldHighlight = red bold 52
+    newNormal = green bold
+    newHighlight = green bold 22
