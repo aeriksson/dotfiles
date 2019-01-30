@@ -96,7 +96,7 @@ install() {
             fail "Unknown package manager"
         fi
     else
-         fail "Unknown OS."
+        fail "Unknown OS."
     fi
 }
 
@@ -186,12 +186,12 @@ setup_vim() {
     log_header "Setting up vim"
 
     if [[ "$DISTRO" == "Ubuntu*" ]]; then
-	if $(grep -R neovim-ppa /etc/apt/sources.* >/dev/null 2>&1); then
+        if $(grep -R neovim-ppa /etc/apt/sources.* >/dev/null 2>&1); then
             # Add repository for neovim
             install python-software-properties
             sudo add-apt-repository ppa:neovim-ppa/stable
             sudo apt-get update
-	fi
+        fi
     fi
 
     is_cmd nvim || install neovim
