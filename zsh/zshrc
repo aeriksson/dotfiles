@@ -8,6 +8,7 @@ plugins=(
   git
   history-substring-search
   zsh-syntax-highlighting
+  helm
 )
 
 # Oh-my-zsh options
@@ -38,7 +39,17 @@ RPROMPT="[%D{%H:%M:%S}]"
 autoload -U compinit && compinit -u
 
 # Bind up/down keys for zsh-history-substring-search
+export FZF_DEFAULT_COMMAND='rg --files --hidden'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# shortcut for opening all files containing something
+alias vag='f() { vim -p $(ag -l $@) };f'
+alias docker-grep='f() { docker ps --format="{{.Names}}" | grep "$@" };f'
+alias docker-kill='f() { docker rm -f $(docker-grep $@) };f'
+alias cat=bat
+alias du="ncdu --color dark -rr -x --exclude .git"
+alias kc=kubectl
