@@ -246,10 +246,60 @@ setup_packages() {
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
         log "Adding brew packages..."
-        optional_brew_install vim python python3 leiningen cabal-install irssi ag
+        optional_brew_install \
+            ag \
+            bat \
+            clojure \
+            coreutils \
+            diff-so-fancy \
+            dinghy \
+            docker \
+            docker-compose \
+            docker-machine \
+            fswatch \
+            git \
+            glances \
+            httpie \
+            irssi \
+            jq \
+            kubernetes-cli \
+            kubernetes-helm \
+            leiningen \
+            neovim \
+            node \
+            python \
+            python3 \
+            ripgrep \
+            ruby \
+            rust \
+            tree \
+            vim \
+            wget \
+            yarn
 
         log "Adding cask packages..."
-        optional_cask_install alfred chromium iterm2 vagrant virtualbox rstudio firefoxdeveloperedition
+        optional_cask_install \
+            alfred \
+            iterm2 \
+            virtualbox \
+            firefoxdeveloperedition \
+            java \
+            alfred \
+            android-platform-tools \
+            android-studio \
+            anki \
+            discord \
+            dotnet \
+            dropbox \
+            firefox \
+            google-cloud-sdk \
+            java \
+            julia \
+            lastpass \
+            mactex \
+            minikube \
+            spotify \
+            virtualbox
     fi
 }
 
