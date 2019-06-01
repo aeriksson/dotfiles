@@ -16,8 +16,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 " Git integration
 Plug 'tpope/vim-fugitive'
-" Nice theme
+" Themes
 Plug 'altercation/vim-colors-solarized'
+Plug 'chriskempson/base16-vim'
 " Easy commenting
 Plug 'tomtom/tcomment_vim'
 " Syntax checks
@@ -52,8 +53,6 @@ Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 Plug 'tpope/vim-fireplace'
 Plug 'tpope/vim-salve'
 Plug 'edkolev/tmuxline.vim'
-" Jsonnet
-Plug 'google/vim-jsonnet'
 
 call plug#end()
 
@@ -107,6 +106,10 @@ syntax enable
 set background=dark
 let g:solarized_visibility = "high"
 colorscheme solarized
+" let base16colorspace=256 " Access colors present in 256 colorspace
+" set t_Co=256 " 256 color mode
+" set background=dark
+" colorscheme base16-solarized-dark
 
 " Syntastic
 let g:syntastic_error_symbol = '✗'

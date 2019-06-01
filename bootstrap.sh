@@ -162,6 +162,7 @@ setup_osx() {
 
     log "Installing brew..."
     is_cmd brew || ruby -e "$(download ${HOMEBREW_URL})"
+    brew tap codekitchen/dinghy
     log "Updating brew..."
     brew update | grep -v "Already up-to-date." || true
     log "Upgrading brew..."
@@ -171,8 +172,6 @@ setup_osx() {
 
     log "Cleaning up brew..."
     brew cleanup
-    brew prune > /dev/null
-    brew cask cleanup > /dev/null
 }
 
 setup_git() {
@@ -245,6 +244,26 @@ setup_packages() {
     log_header "Adding optional packages"
 
     if [[ "$PLATFORM" == "Darwin" ]]; then
+        log "Adding cask packages..."
+        optional_cask_install \
+            alfred \
+            android-platform-tools \
+            android-studio \
+            anki \
+            discord \
+            dotnet \
+            dropbox \
+            firefox \
+            google-cloud-sdk \
+            iterm2 \
+            java \
+            julia \
+            mactex \
+            minikube \
+            spotify \
+            slack \
+            virtualbox
+
         log "Adding brew packages..."
         optional_brew_install \
             ag \
@@ -273,33 +292,8 @@ setup_packages() {
             ruby \
             rust \
             tree \
-            vim \
             wget \
             yarn
-
-        log "Adding cask packages..."
-        optional_cask_install \
-            alfred \
-            iterm2 \
-            virtualbox \
-            firefoxdeveloperedition \
-            java \
-            alfred \
-            android-platform-tools \
-            android-studio \
-            anki \
-            discord \
-            dotnet \
-            dropbox \
-            firefox \
-            google-cloud-sdk \
-            java \
-            julia \
-            lastpass \
-            mactex \
-            minikube \
-            spotify \
-            virtualbox
     fi
 }
 
@@ -320,4 +314,4 @@ setup_zsh
 setup_tmux
 [[ "$PLATFORM" == "Darwin" ]] && setup_osx
 setup_packages
-setup_python
+# setup_python
