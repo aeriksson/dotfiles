@@ -2,18 +2,21 @@
 ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="andre"
 
+source ~/.profile
+
 plugins=(
   brew
   colored-man
   git
-  history-substring-search
-  zsh-syntax-highlighting
   helm
+  history-substring-search
+  terraform
+  zsh-syntax-highlighting
 )
 
 # Oh-my-zsh options
 DISABLE_CORRECTION="true"
-COMPLETION_WAITING_DOTS="true"
+# COMPLETION_WAITING_DOTS="true"
 
 # Init oh-my-zsh
 source $ZSH/oh-my-zsh.sh
@@ -32,8 +35,8 @@ else
   unsetopt ignoreeof
 fi
 
-# Display time
-RPROMPT="[%D{%H:%M:%S}]"
+# # Display time
+# RPROMPT="[%D{%H:%M:%S}]"
 
 # Enable autojump
 autoload -U compinit && compinit -u
@@ -47,9 +50,23 @@ bindkey "$terminfo[kcud1]" history-substring-search-down
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # shortcut for opening all files containing something
-alias vag='f() { vim -p $(ag -l $@) };f'
+alias ag=rg
+alias vag='f() { vim -p $(rg -l $@) };f'
 alias docker-grep='f() { docker ps --format="{{.Names}}" | grep "$@" };f'
 alias docker-kill='f() { docker rm -f $(docker-grep $@) };f'
-alias cat=bat
-alias du="ncdu --color dark -rr -x --exclude .git"
+alias ncdu="ncdu --color dark -rr -x --exclude .git"
 alias kc=kubectl
+alias gpi='git push --set-upstream origin $(git branch --show-current)'
+alias ls='ls -G'
+
+# Starship; for the prompt
+eval "$(starship init zsh)" # TODO: reenable once autocomplete works
+
+# GPG
+export GPG_TTY=$(tty)
+
+# This is temporary
+source ~/.zsh-autocomplete
+
+source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
+source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc
