@@ -16,20 +16,24 @@ call plug#begin('~/.vim/plugged')
 Plug 'tpope/vim-sensible'
 " Git integration
 Plug 'tpope/vim-fugitive'
-" Nice theme
-Plug 'altercation/vim-colors-solarized'
+" Smart find/replace
+Plug 'tpope/vim-abolish'
+" Themes
+Plug 'lifepillar/vim-solarized8'
+Plug 'chriskempson/base16-vim'
+Plug 'oyvinmar/vim-snazzy'
 " Easy commenting
 Plug 'tomtom/tcomment_vim'
-" Syntax checks
-Plug 'scrooloose/syntastic'
-" Autocomplete
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Linting
+Plug 'dense-analysis/ale'
+" " Autocomplete
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 if v:version >= 703
     " Better line numbering
     Plug 'myusuf3/numbers.vim'
 endif
 " Faster editing
-Plug 'terryma/vim-multiple-cursors'
+Plug 'mg979/vim-visual-multi'
 " Nicer statusline
 Plug 'bling/vim-airline'
 " Better undo
@@ -37,7 +41,7 @@ Plug 'mbbill/undotree'
 " Better than grep
 Plug 'rking/ag.vim'
 " Colorful parentheses
-Plug 'kien/rainbow_parentheses.vim'
+Plug 'luochen1990/rainbow'
 " Syntax highlighting
 Plug 'sheerun/vim-polyglot'
 " Better S-expression editing
@@ -47,13 +51,8 @@ Plug 'guns/vim-clojure-static'
 " Highlight Clojure vars
 Plug 'guns/vim-clojure-highlight'
 " Fuzzy finding
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
-" Fireplace
-Plug 'tpope/vim-fireplace'
-Plug 'tpope/vim-salve'
-Plug 'edkolev/tmuxline.vim'
-" Jsonnet
-Plug 'google/vim-jsonnet'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 
 call plug#end()
 
@@ -79,7 +78,6 @@ set viminfo='1000,<1000,s10,h,f1
 set expandtab
 set shiftwidth=4
 set tabstop=4
-set linebreak
 set smartindent
 set wrap
 
@@ -104,9 +102,9 @@ let g:Powerline_symbols = 'fancy'
 
 " Theme
 syntax enable
+set termguicolors
 set background=dark
-let g:solarized_visibility = "high"
-colorscheme solarized
+colorscheme solarized8
 
 " Syntastic
 let g:syntastic_error_symbol = '✗'
@@ -211,10 +209,7 @@ set tags=./tags;~/code
 autocmd BufRead *.clj try | silent! Require | catch /^Fireplace/ | endtry
 
 " Enable rainbow parentheses for all buffers
-au VimEnter * RainbowParenthesesActivate
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+let g:rainbow_active = 1
 
 " better C-t
 nnoremap <C-t> :FZF<CR>
@@ -231,3 +226,34 @@ let g:tmuxline_preset = {
 let g:syntastic_html_checkers=['']
 
 let g:clojure_align_subforms = 1
+
+if has("nvim")
+  set inccommand=nosplit
+endif
+
+function! CljstyleFix(buffer) abort
+    " TODO: figure this out
+    return {
+    \   'command': 'cljstyle fix %s',
+    \   'read_temporary_file': 1
+    \}
+endfunction
+
+call ale#fix#registry#Add('cljstyle',
+                        \ 'CljstyleFix',
+                        \ ['clj', 'cljc', 'cljs', 'edn'],
+                        \ 'Fix Clojure/EDN with cljstyle.')
+
+let g:ale_fixers = {'clojure': ['cljstyle']}
+
+autocmd FileType sh setlocal shiftwidth=2 tabstop=2
+autocmd FileType css setlocal shiftwidth=2 tabstop=2
+
+" Make n/N consistent regardless of whether a seach was started via / or ?
+nnoremap <expr> n 'Nn'[v:searchforward].(&fdo=~'search\\|all'?'zv':'')
+nnoremap <expr> N 'nN'[v:searchforward].(&fdo=~'search\\|all'?'zv':'')
+
+set listchars=tab:→\ ,nbsp:∘,trail:•,precedes:«,extends:»
+
+
+au BufRead,BufNewFile *.tf set filetype=terraform
