@@ -1,11 +1,5 @@
 " vim config
 
-" Requires vim-plug:
-" `mkdir -p ~/.vim/autoload`
-" `curl -fLo ~/.vim/autoload/plug.vim https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim`
-"
-" `mkdir -p ~/.vim/undodir` for persistent undo.
-
 " Enable plugins
 set nocompatible
 filetype off
@@ -35,7 +29,8 @@ endif
 " Faster editing
 Plug 'mg979/vim-visual-multi'
 " Nicer statusline
-Plug 'bling/vim-airline'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 " Better undo
 Plug 'mbbill/undotree'
 " Better than grep
@@ -53,6 +48,15 @@ Plug 'guns/vim-clojure-highlight'
 " Fuzzy finding
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+" Dim inactive windows
+Plug 'blueyed/vim-diminactive'
+" Portable copy
+Plug 'ojroques/vim-oscyank', {'branch': 'main'}
+
+Plug 'github/copilot.vim'
+
+Plug 'neovim/nvim-lspconfig'
+Plug 'simrat39/rust-tools.nvim'
 
 call plug#end()
 
@@ -73,19 +77,20 @@ filetype plugin indent on
 set hlsearch
 set smartcase
 set viminfo='1000,<1000,s10,h,f1
+set backupcopy=yes
 
 " Text, tabs, indent
 set expandtab
-set shiftwidth=4
+set shiftwidth=2
 set tabstop=4
 set smartindent
 set wrap
 
 " Enable persistent undo
 if has('persistent_undo')
-    set undodir=~/.vim/undodir
-    set undofile
-    set undoreload=10000
+  set undodir=~/.vim/undodir
+  set undofile
+  set undoreload=10000
 endif
 set undolevels=1000
 
@@ -95,10 +100,18 @@ if has("mouse")
 endif
 
 " Use system clipboard
-set clipboard+=unnamed
+set clipboard=unnamedplus
+
+let g:oscyank_silent = v:true
 
 " Airline
-let g:Powerline_symbols = 'fancy'
+let g:airline_theme='minimalist'
+let g:airline_powerline_fonts = 1
+let g:airline#extensions#branch#enabled = 0
+let g:airline_section_y = ''
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_section_z = airline#section#create(['linenr', 'maxlinenr'])
 
 " Theme
 syntax enable
@@ -137,9 +150,6 @@ autocmd BufReadPost *
 " No folding
 autocmd Syntax c,cpp,python normal zR
 
-" Airline
-let g:airline_powerline_fonts = 1
-
 " Always enable editing (useful in vimdiff)
 set noreadonly
 
@@ -158,6 +168,9 @@ command W w
 command Q q
 command WQ wq
 command Wq wq
+command E e
+command Qa qa
+command QA qa
 
 " Move around splits with <c-hjkl>
 nnoremap <c-j> <c-w>j
@@ -167,16 +180,18 @@ nnoremap <c-l> <c-w>l
 
 " Mark unwanted whitespace
 set list
+set listchars=tab:→\ ,nbsp:∘,trail:•,precedes:«,extends:»
 autocmd Syntax make,gitcommit set nolist
 
 " delimit specific line width
-if has('persistent_undo')
-  autocmd Syntax c,cpp set colorcolumn=120
-  autocmd Syntax python,clojure set colorcolumn=80
-endif
+autocmd Syntax c,cpp set colorcolumn=120
+autocmd Syntax python,clojure set colorcolumn=88
+autocmd Syntax clojure set colorcolumn=80
+autocmd Syntax rust set colorcolumn=100
+autocmd Syntax gitcommit set colorcolumn=50,72
 
 " Clear search highlight.
-nnoremap <silent> <c-i> :nohlsearch<CR><c-i>
+nnoremap <silent> <c-u> :noh<CR>
 
 function! Preserve(command)
   " Preparation: save last search, and cursor position.
@@ -239,13 +254,6 @@ function! CljstyleFix(buffer) abort
     \}
 endfunction
 
-call ale#fix#registry#Add('cljstyle',
-                        \ 'CljstyleFix',
-                        \ ['clj', 'cljc', 'cljs', 'edn'],
-                        \ 'Fix Clojure/EDN with cljstyle.')
-
-let g:ale_fixers = {'clojure': ['cljstyle']}
-
 autocmd FileType sh setlocal shiftwidth=2 tabstop=2
 autocmd FileType css setlocal shiftwidth=2 tabstop=2
 
@@ -253,7 +261,182 @@ autocmd FileType css setlocal shiftwidth=2 tabstop=2
 nnoremap <expr> n 'Nn'[v:searchforward].(&fdo=~'search\\|all'?'zv':'')
 nnoremap <expr> N 'nN'[v:searchforward].(&fdo=~'search\\|all'?'zv':'')
 
-set listchars=tab:→\ ,nbsp:∘,trail:•,precedes:«,extends:»
-
-
 au BufRead,BufNewFile *.tf set filetype=terraform
+
+let g:diminactive_enable_focus = 1
+
+" TODO: cleanup
+let g:clojure_align_subforms = 1
+autocmd FileType clojure setlocal lispwords+=GET,POST,PUT,DELETE,HEAD,ANY,context,cond
+let g:clojure_fuzzy_indent_patterns = ['^with', '^def', '^let', '^\.']
+let g:clojure_special_indent_words = 'deftype,defrecord,reify,proxy,extend-type,extend-protocol,letfn,defservice'
+
+" Vag calls ripgrep with the provided args and opens the results in new tabs
+command! -nargs=+ Vag call Vag(<f-args>)
+function! Vag(...)
+  let cmd = 'rg --max-count 1 --vimgrep ' . join(a:000, ' ')
+  for line in split(system(cmd), '\n')
+    let parts = split(line, ':')
+    let filepath = parts[0]
+    let line_number = parts[1]
+    execute 'tabnew' filepath
+    execute line_number
+  endfor
+endfunction
+
+function! EscapeForRegex(text)
+  return substitute(a:text, '[\.*\\[\\]^$~&]', '\\&', 'g')
+endfunction
+
+" & runs ripgrep+fzf for the word under the cursor
+nnoremap & :execute 'RG ' . EscapeForRegex(expand('<cword>'))<CR>
+xnoremap & :<C-u>execute 'RG ' . EscapeForRegex(shellescape(expand('<cword>')))<CR>
+
+" Lookback in Clojure
+let g:paredit_lookback=10000
+let g:paredit_matchlines=10000
+let g:clojure_maxlines=10000
+
+if has('nvim')
+  lua << EOF
+
+  vim.lsp.set_log_level("debug")
+
+  local rt = require("rust-tools")
+
+  rt.setup({
+    tools = {
+      autoSetHints = true,
+      inlay_hints = {
+        show_parameter_hints = true,
+        parameter_hints_prefix = "<- ",
+        other_hints_prefix = "=> "
+      }
+    },
+    server = {
+      on_attach = function(_, bufnr)
+        -- Hover actions
+        vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+        -- Code action groups
+        vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+      end,
+    },
+  })
+EOF
+
+  lua << EOF
+  local opts = { noremap=true, silent=true }
+  vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
+  vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+  vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+  vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
+
+  -- Use an on_attach function to only map the following keys
+  -- after the language server attaches to the current buffer
+  local on_attach = function(client, bufnr)
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    local bufopts = { noremap=true, silent=true, buffer=bufnr }
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
+    vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
+    vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
+    vim.keymap.set('n', '<space>wl', function()
+      print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, bufopts)
+    vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
+    vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
+    vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
+    vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
+    vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
+  end
+
+  -- Configure `ruff-lsp`.
+  -- See: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#ruff_lsp
+  -- For the default config, along with instructions on how to customize the settings
+  require('lspconfig').ruff_lsp.setup {
+    on_attach = on_attach,
+    init_options = {
+      settings = {
+        -- Any extra CLI arguments for `ruff` go here.
+        args = {},
+      }
+    }
+  }
+
+  -- require('lspconfig').clojure_lsp.setup{}
+EOF
+endif
+
+highlight DiagnosticUnderlineError gui=underline cterm=underline guifg=#FF0000
+highlight DiagnosticUnderlineWarn gui=underline cterm=underline guifg=#FFA500
+
+autocmd FileType rust LspStart
+
+augroup RustFmt
+  autocmd!
+  autocmd BufWritePre *.rs RustFmt
+augroup END
+
+" NOTE: ALE's built-in clj-kondo linter doesn't handle col ranges, which
+" breaks the highlighting when using neovim's built-in diagnostics API.
+
+call ale#Set('clojure_clj_kondo_options', '--cache --config ''{:output {:format :json}}''')
+
+function! GetCljKondoCommand(buffer) abort
+    let l:options = ale#Var(a:buffer, 'clojure_clj_kondo_options')
+
+    let l:command = 'clj-kondo'
+    \   . ale#Pad(l:options)
+    \   . ' --lint -'
+    \   . ' --filename %s'
+
+    return l:command
+endfunction
+
+function! HandleCljKondoJSON(buffer, lines) abort
+    let l:findings = json_decode(join(a:lines, ''))['findings']
+    let l:output = []
+    for l:finding in l:findings
+        let l:type = l:finding.level ==# 'warning' ? 'W' : 'E'
+        let l:end_row = get(l:finding, 'end-row', l:finding.row)
+        let l:end_col = get(l:finding, 'end-col', l:finding.col + 1) - 1
+        call add(l:output, {
+        \   'lnum': l:finding.row,
+        \   'col': l:finding.col,
+        \   'end_lnum': l:end_row,
+        \   'end_col': l:end_col,
+        \   'text': l:finding.message,
+        \   'type': l:type,
+        \})
+    endfor
+    return l:output
+endfunction
+
+call ale#linter#Define('clojure', {
+\   'name': 'clj-kondo',
+\   'output_stream': 'stdout',
+\   'executable': 'clj-kondo',
+\   'command': function('GetCljKondoCommand'),
+\   'callback': 'HandleCljKondoJSON',
+\})
+
+call ale#fix#registry#Add('cljstyle',
+                        \ 'CljstyleFix',
+                        \ ['clj', 'cljc', 'cljs', 'edn'],
+                        \ 'Fix Clojure/EDN with cljstyle.')
+
+call ale#linter#PreventLoading('clojure')
+
+highlight ALEWarning gui=underline
+highlight ALEError gui=underline
+highlight ALEVirtualTextError guifg=DarkRed
+highlight ALEVirtualTextWarning guifg=DarkYellow
+
+let g:ale_fixers = {'clojure': ['cljstyle']}
+let g:ale_linters = {'python': [], 'clojure': ['clj-kondo']}

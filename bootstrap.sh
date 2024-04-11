@@ -171,8 +171,6 @@ setup_osx() {
 
     log "Cleaning up brew..."
     brew cleanup
-    brew prune > /dev/null
-    brew cask cleanup > /dev/null
 }
 
 setup_git() {

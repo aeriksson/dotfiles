@@ -10,9 +10,12 @@ Session.vim
 *~
 .ycm_extra_conf.py
 
-# osx
+# OSX
 .DS_Store
 .AppleDouble
 .LSOverride
 .Spotlight-V100
 .Trashes
+
+# Custom
+.aescratch
