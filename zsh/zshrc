@@ -65,10 +65,25 @@ eval "$(starship init zsh)" # TODO: reenable once autocomplete works
 # GPG
 export GPG_TTY=$(tty)
 
-# This is temporary
-source ~/.zsh-autocomplete
-
-source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc
-source /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc
-
 source ~/.profile
+
+view-yaml() {
+  if [ -t 0 ]; then
+    vim '+:set ft=yaml' -
+  else
+    vim '+:set ft=yaml' <&0
+  fi
+}
+
+view-json() {
+  if [ -t 0 ]; then
+    jq | vim '+:set ft=json' -
+  else
+    jq '.' <&0 | vim '+:set ft=json'
+  fi
+}
+
+# Share history
+setopt append_history
+setopt share_history
+setopt inc_append_history
