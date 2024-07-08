@@ -19,3 +19,5 @@ Session.vim
 
 # Custom
 .aescratch
+.lsp
+.clj-kondo
