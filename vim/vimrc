@@ -14,7 +14,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-abolish'
 " Themes
 Plug 'lifepillar/vim-solarized8'
-Plug 'chriskempson/base16-vim'
 Plug 'oyvinmar/vim-snazzy'
 " Easy commenting
 Plug 'tomtom/tcomment_vim'
@@ -296,6 +295,10 @@ xnoremap & :<C-u>execute 'RG ' . EscapeForRegex(shellescape(expand('<cword>')))<
 let g:paredit_lookback=10000
 let g:paredit_matchlines=10000
 let g:clojure_maxlines=10000
+
+" make command line feel more like bash
+cnoremap <C-a> <Home>
+cnoremap <C-k> <C-\>e strpart(getcmdline(), 0, getcmdpos() - 1)<CR>
 
 if has('nvim')
   lua << EOF
