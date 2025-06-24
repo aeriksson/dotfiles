@@ -239,12 +239,6 @@ setup_fonts() {
     ./fonts/install.sh
 }
 
-setup_python() {
-    log_header "Setting up Python"
-
-    pip_upgrade setuptools distribute pip
-}
-
 setup_packages() {
     log_header "Adding optional packages"
 
@@ -296,4 +290,3 @@ setup_zsh
 setup_tmux
 [[ "$PLATFORM" == "Darwin" ]] && setup_osx
 setup_packages
-setup_python
