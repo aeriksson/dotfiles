@@ -74,8 +74,13 @@ cask_has() {
     brew cask list "$1" > /dev/null 2>&1 && return 0 || return 1
 }
 
+find_pip() {
+    [[ ${PIP_CMD:-""} != "" ]]; PIP_CMD=$(which pip3 || which pip)
+}
+
 pip_has() {
-    pip show "$1" > /dev/null 2>&1 && return 0 || return 1
+    find_pip
+    "$PIP_CMD" show "$1" > /dev/null 2>&1 && return 0 || return 1
 }
 
 install() {
@@ -147,8 +152,9 @@ optional_cask_install() {
 }
 
 pip_upgrade() {
+    find_pip
     for pkg; do
-        pip install --upgrade -q $pkg 2>&1 || grep -v "Requirement already up-to-date"
+        "$PIP_CMD" install --upgrade -q $pkg 2>&1 || grep -v "Requirement already up-to-date"
     done
 }
 
