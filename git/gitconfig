@@ -11,9 +11,9 @@
     ls = ls-files
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>' --all
     lg2 = log --graph--all
-    edit-unmerged = !vim -p $(git ls-files --unmerged | cut -f2 | sort -u)
+    edit-unmerged = !nvim -p $(git ls-files --unmerged | cut -f2 | sort -u)
     add-unmerged = !git add $(git ls-files --unmerged | cut -f2 | sort -u)
-    edit-untracked = !vim -p $(git ls-files --others --exclude-standard | sort -u)
+    edit-untracked = !nvim -p $(git ls-files --others --exclude-standard | sort -u)
     add-untracked = !git add $(git ls-files --others --exclude-standard | sort -u)
 
 [push]
@@ -21,7 +21,7 @@
 
 [core]
     whitespace=fix,-indent-with-non-tab,trailing-space,cr-at-eol
-    editor = vim
+    editor = nvim
     excludesfile = ~/.gitignore_global
     pager = diff-so-fancy | less --tabs=4 -RFX
 
