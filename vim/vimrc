@@ -441,8 +441,8 @@ highlight ALEError gui=underline
 highlight ALEVirtualTextError guifg=DarkRed
 highlight ALEVirtualTextWarning guifg=DarkYellow
 
-let g:ale_fixers = {'clojure': ['cljstyle']}
-let g:ale_linters = {'python': [], 'clojure': ['clj-kondo']}
+let g:ale_fixers = {'python': ['ruff_format'], 'clojure': ['cljstyle']}
+let g:ale_linters = {'python': ['ruff'], 'clojure': ['clj-kondo']}
 
 nnoremap <C-PageDown> <Nop>
 nnoremap <C-PageUp> <Nop>
