@@ -21,3 +21,4 @@ Session.vim
 .aescratch
 .lsp
 .clj-kondo
+.rgignore
