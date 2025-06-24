@@ -439,3 +439,4 @@ nnoremap <C-ScrollWheelUp> <Nop>
 nnoremap <C-ScrollWheelDown> <Nop>
 
 autocmd FileType * syntax keyword Todo REF NOTE containedin=ALLCOMMENTS
+autocmd FileType clojure,sheme call PareditInitBuffer()
