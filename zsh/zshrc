@@ -6,7 +6,6 @@ source ~/.profile
 
 plugins=(
   brew
-  colored-man
   git
   helm
   history-substring-search
