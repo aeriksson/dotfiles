@@ -173,7 +173,7 @@ setup_osx() {
     log "Upgrading brew..."
     brew upgrade
     log "Running brew doctor..."
-    brew doctor > /dev/null
+    brew doctor || true > /dev/null
 
     log "Cleaning up brew..."
     brew cleanup
