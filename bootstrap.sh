@@ -290,3 +290,4 @@ setup_zsh
 setup_tmux
 [[ "$PLATFORM" == "Darwin" ]] && setup_osx
 setup_packages
+log_header "Done!"
