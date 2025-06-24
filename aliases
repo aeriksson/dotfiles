@@ -23,3 +23,14 @@ alias brews='brew list -1'
 # vim
 alias vi='nvim'
 alias vim='nvim'
+
+# misc
+alias ag=rg
+alias vag='f() { vim -p $(rg -l $@ | sort) };f'
+alias docker-grep='f() { docker ps --format="{{.Names}}" | grep "$@" };f'
+alias docker-kill='f() { docker rm -f $(docker-grep $@) };f'
+alias ncdu="ncdu --color dark -rr -x --exclude .git"
+alias kc=kubectl
+alias gpi='git push --set-upstream origin $(git branch --show-current)'
+alias ls='ls -G'
+alias t=task
