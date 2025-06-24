@@ -19,10 +19,6 @@ DISABLE_CORRECTION="true"
 # Init oh-my-zsh
 source $ZSH/oh-my-zsh.sh
 
-# Setup environment and aliases
-source ~/.profile
-source ~/.aliases
-
 # Autocomplete special directories
 zstyle ':completion:*' special-dirs true
 
@@ -45,25 +41,13 @@ export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 zmodload zsh/terminfo
 bindkey "$terminfo[kcuu1]" history-substring-search-up
 bindkey "$terminfo[kcud1]" history-substring-search-down
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# shortcut for opening all files containing something
-alias ag=rg
-alias vag='f() { vim -p $(rg -l $@) };f'
-alias docker-grep='f() { docker ps --format="{{.Names}}" | grep "$@" };f'
-alias docker-kill='f() { docker rm -f $(docker-grep $@) };f'
-alias ncdu="ncdu --color dark -rr -x --exclude .git"
-alias kc=kubectl
-alias gpi='git push --set-upstream origin $(git branch --show-current)'
-alias ls='ls -G'
+which fzf > /dev/null && source <(fzf --zsh)
 
 # Starship; for the prompt
-eval "$(starship init zsh)" # TODO: reenable once autocomplete works
+eval "$(starship init zsh)"
 
 # GPG
 export GPG_TTY=$(tty)
-
-source ~/.profile
 
 view-yaml() {
   if [ -t 0 ]; then
